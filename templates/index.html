@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Spam Guard | Detector Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-card">
+        <div class="header">
+            <h1>🛡️ AI Spam Guard</h1>
+            <p>Analizador de correos potenciado por Machine Learning</p>
+        </div>
+
+        <div class="input-group">
+            <label for="emailInput">Ingresa el contenido del correo (En Inglés):</label>
+            <textarea id="emailInput" placeholder="Ej: Congratulations! You've won a $1000 Walmart gift card..."></textarea>
+        </div>
+
+        <button id="analyzeBtn" onclick="analyzeEmail()">🔍 Analizar Correo</button>
+
+        <div id="resultArea">
+            <div id="statusBox" class="status-box">
+                <span id="statusIcon" class="status-icon"></span>
+                <span id="statusText" class="status-title"></span>
+            </div>
+
+            <div class="explanation-box">
+                <span class="explanation-title">📝 Por qué la IA tomó esta decisión:</span>
+                <div id="wordsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function analyzeEmail() {
+            const input = document.getElementById('emailInput');
+            const btn = document.getElementById('analyzeBtn');
+            const resultArea = document.getElementById('resultArea');
+            const text = input.value.trim();
+
+            if (!text) return alert("Por favor escribe algo para analizar.");
+
+            btn.disabled = true;
+            btn.innerHTML = "⏳ Analizando...";
+            resultArea.style.display = 'none';
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email_text: text })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    mostrarResultados(data);
+                } else {
+                    alert("Error: " + data.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Error de conexión con el servidor.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "🔍 Analizar Correo";
+            }
+        }
+
+        function mostrarResultados(data) {
+            console.log("Datos recibidos:", data); // <--- ESTO NOS AYUDARÁ A DEPURAR
+
+            const resultArea = document.getElementById('resultArea');
+            const statusBox = document.getElementById('statusBox');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusText = document.getElementById('statusText');
+            const wordsContainer = document.getElementById('wordsContainer');
+
+            const isSpam = data.prediccion_spam === 1;
+
+            // Configurar estilos
+            statusBox.className = `status-box ${isSpam ? 'spam' : 'ham'}`;
+            statusIcon.textContent = isSpam ? '🚨' : '✅';
+            
+            // Texto del estado (Operador ternario corregido)
+            statusText.textContent = isSpam ? '¡PELIGRO! ES SPAM' : 'MENSAJE SEGURO';
+
+            // Limpiar contenedor de palabras
+            wordsContainer.innerHTML = '';
+            
+            // Verificar si hay explicación
+            // IMPORTANTE: Aquí corregimos 'expliAcacion' por 'explicacion'
+            if (!data.explicacion || data.explicacion.length === 0) {
+                 wordsContainer.innerHTML = '<span style="color:#666;">No se detectaron palabras peligrosas.</span>';
+            } else {
+                // Bucle corregido
+                data.explicacion.forEach(([word, weight]) => {
+                    if (Math.abs(weight) > 0.01) {
+                        const tag = document.createElement('div');
+                        tag.className = 'word-tag';
+                        const percent = (weight * 100).toFixed(1) + '%';
+                        
+                        const colorStyle = weight > 0 ? 'border-color: #ef4444; color: #ef4444;' : 'border-color: #10b981; color: #10b981;';
+                        
+                        tag.style.cssText = colorStyle; 
+                        tag.innerHTML = `<span>${word}</span> <span class="word-weight">${percent}</span>`;
+                        wordsContainer.appendChild(tag);
+                    }
+                });
+            }
+
+            resultArea.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

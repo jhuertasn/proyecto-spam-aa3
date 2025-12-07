@@ -1,0 +1,225 @@
+:root {
+    --primary: #4f46e5;       /* Azul índigo moderno */
+    --primary-dark: #4338ca;
+    --success: #059669;       /* Verde esmeralda */
+    --danger: #dc2626;        /* Rojo intenso */
+    --bg: #f8fafc;            /* Gris muy claro */
+    --card: #ffffff;
+    --text: #1e293b;          /* Gris oscuro */
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg);
+    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.main-card {
+    background: var(--card);
+    width: 100%;
+    max-width: 650px;
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: transform 0.2s;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.header h1 {
+    font-size: 2rem;
+    margin: 0;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+.header p {
+    color: var(--text-light);
+    margin-top: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.input-group {
+    margin-bottom: 2rem;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+    font-size: 0.95rem;
+}
+
+textarea {
+    width: 100%;
+    height: 160px;
+    padding: 1.25rem;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    background-color: #f9fafb;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+button {
+    width: 100%;
+    padding: 1.25rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+}
+
+button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px -1px rgba(79, 70, 229, 0.3);
+}
+
+button:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Resultados con Animación */
+#resultArea {
+    margin-top: 2.5rem;
+    display: none;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.status-box {
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-box.spam {
+    background-color: #fef2f2;
+    border: 2px solid #fee2e2;
+    color: var(--danger);
+}
+
+.status-box.ham {
+    background-color: #ecfdf5;
+    border: 2px solid #d1fae5;
+    color: var(--success);
+}
+
+.status-icon {
+    font-size: 4rem; /* Hacemos el ícono más grande */
+    line-height: 1;
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.status-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+/* Animación de latido para SPAM */
+@keyframes pulse-danger {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.status-box.spam .status-icon {
+    animation: pulse-danger 1s infinite; /* El escudo temblará si es spam */
+    filter: drop-shadow(0 4px 6px rgba(220, 38, 38, 0.4)); /* Sombra roja brillante */
+}
+
+.status-box.ham .status-icon {
+    filter: drop-shadow(0 4px 6px rgba(5, 150, 105, 0.4)); /* Sombra verde brillante */
+}
+
+.explanation-box {
+    background-color: #f8fafb;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.explanation-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+#wordsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.word-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.word-weight {
+    margin-left: 8px;
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background-color: rgba(0,0,0,0.05);
+    font-weight: 700;
+}
